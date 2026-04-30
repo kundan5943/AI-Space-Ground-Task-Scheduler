@@ -1,0 +1,29 @@
+{
+  "name": "ai_task_schedular",
+  "version": "1.0.0",
+  "description": "The AI-Powered Task Scheduler for Space–Ground Computing is a smart system that decides whether a satellite task should run in space or on ground servers.",
+  "main": "index.js",
+  "scripts": {
+    "test": "\"echo \\\"No test specified\\\" && exit 0\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kundanchau01-eng/Ai-task-scheduler-.git"
+  },
+  "author": "Kundan Chaudhari",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kundanchau01-eng/Ai-task-scheduler-/issues"
+  },
+  "homepage": "https://github.com/kundanchau01-eng/Ai-task-scheduler-#readme",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.13.6",
+    "cors": "^2.8.5",
+    "dotenv": "^17.3.1",
+    "ejs": "^4.0.1",
+    "express": "^5.1.0",
+    "mongoose": "^8.23.0",
+    "nodemon": "^3.1.10"
+  }
+}

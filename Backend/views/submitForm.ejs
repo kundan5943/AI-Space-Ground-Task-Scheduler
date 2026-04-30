@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+  <form id="taskForm"action="/submit-task" method="post">
+    <input type="text" id="taskName" placeholder="Task Name" required name="taskName" /><br />
+    <input type="number" id="compute" placeholder="Compute Power" required name="computePower" /><br />
+    <input type="number" id="dataSize" placeholder="Data Size" required name="dataSize"/><br />
+    <select id="urgency" name="urgency">
+      <option value="low">Low Urgency</option>
+      <option value="high">High Urgency</option>
+    </select><br />
+    <button type="submit">Submit Task</button>
+  </form>
+
+</body>
+</html>

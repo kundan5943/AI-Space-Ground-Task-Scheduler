@@ -1,4 +1,20 @@
+import { useNavigate } from "react-router-dom";
+import "./layout.css";
 export default function Header() {
+  const navigate = useNavigate();
+  const logoutUser = async () => {
+    try {
+      await fetch("http://localhost:8080/aiTaskSchedular/logout", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <header
       className="glass"
@@ -11,56 +27,68 @@ export default function Header() {
         alignItems: "center",
         position: "sticky",
         top: "20px",
-        zIndex: 10
+        zIndex: 10,
       }}
     >
       <div>
-        <div style={{
-          fontSize: "20px",
-          fontWeight: "700",
-          letterSpacing: "0.6px",
-          background: "linear-gradient(90deg,#00f0ff,#ffffff)",
-          WebkitBackgroundClip: "text",
-          color: "transparent"
-        }}>
+        <div
+          style={{
+            fontSize: "20px",
+            fontWeight: "700",
+            letterSpacing: "0.6px",
+            background: "linear-gradient(90deg,#00f0ff,#ffffff)",
+            WebkitBackgroundClip: "text",
+            color: "transparent",
+          }}
+        >
           AI Smart Task Scheduling Dashboard
         </div>
 
-        <div style={{
-          fontSize: "13px",
-          color: "#9aa4b2",
-          marginTop: "4px"
-        }}>
+        <div
+          style={{
+            fontSize: "13px",
+            color: "#9aa4b2",
+            marginTop: "4px",
+          }}
+        >
           Real-time monitoring • Intelligent decisions • Analytics
         </div>
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
-        
-        <div style={{
-          padding: "8px 14px",
-          borderRadius: "30px",
-          background: "rgba(0,240,255,0.08)",
-          border: "1px solid rgba(0,240,255,0.35)",
-          fontSize: "13px",
-          letterSpacing: ".4px"
-        }}>
+        <div
+          style={{
+            padding: "8px 14px",
+            borderRadius: "30px",
+            background: "rgba(0,240,255,0.08)",
+            border: "1px solid rgba(0,240,255,0.35)",
+            fontSize: "13px",
+            letterSpacing: ".4px",
+          }}
+        >
           System Active
         </div>
 
-        <div style={{
-          width: "38px",
-          height: "38px",
-          borderRadius: "50%",
-          background: "linear-gradient(135deg,#00f0ff,#7a5cff)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontWeight: "700"
-        }}>
+        <div
+          style={{
+            width: "38px",
+            height: "38px",
+            borderRadius: "50%",
+            background: "linear-gradient(135deg,#00f0ff,#7a5cff)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontWeight: "700",
+          }}
+        >
           AI
         </div>
 
+        <div>
+          <button onClick={logoutUser} className="logout-btn">
+            Logout
+          </button>
+        </div>
       </div>
     </header>
   );

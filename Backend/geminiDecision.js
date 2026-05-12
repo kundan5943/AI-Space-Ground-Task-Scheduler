@@ -4,92 +4,163 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 async function getAIDecision(task, nodes) {
-  // Safety check for multi-node simulation data
+  //  SAFETY CHECK
+
   if (
     !nodes ||
     !Array.isArray(nodes.satellites) ||
     !Array.isArray(nodes.grounds) ||
     !Array.isArray(nodes.allNodes)
   ) {
-    throw new Error("Simulation data missing satellites, grounds, or allNodes");
+    throw new Error("Simulation data missing nodes");
   }
 
+  //  FILTER ACTIVE NODES
+
+  const activeSatellites = nodes.satellites.filter(
+    (node) =>
+      node.status === "active" && node.power > 15 && node.currentLoad < 95,
+  );
+
+  const activeGrounds = nodes.grounds.filter(
+    (node) =>
+      node.status === "active" && node.power > 15 && node.currentLoad < 95,
+  );
+
+  //  FALLBACK IF NO ACTIVE NODES
+
+  if (activeSatellites.length === 0 && activeGrounds.length === 0) {
+    return {
+      decision: "No Available Node",
+      selectedNode: "none",
+      nodeType: "none",
+      confidence: 0,
+      reason: "No active nodes available.",
+    };
+  }
+
+  //  GEMINI MODEL
+
   const model = genAI.getGenerativeModel({
-    model: "models/gemini-2.5-flash",
+    model: "models/gemini-1.5-flash",
   });
 
-  const satelliteText = nodes.satellites
+  //  COMPACT NODE TEXT
+
+  const satelliteText = activeSatellites
     .map(
-      (node) => `
-- ID: ${node.id}
-  Type: ${node.type}
-  Latency: ${node.latency} ms
-  Power: ${node.power} %
-  Cost: ${node.cost}
-  Status: ${node.status}`
+      (node) =>
+        `${node.id} | latency:${node.latency} | power:${node.power}% | cost:${node.cost} | load:${node.currentLoad}%`,
     )
     .join("\n");
 
-  const groundText = nodes.grounds
+  const groundText = activeGrounds
     .map(
-      (node) => `
-- ID: ${node.id}
-  Type: ${node.type}
-  Latency: ${node.latency} ms
-  Power: ${node.power} %
-  Cost: ${node.cost}
-  Status: ${node.status}`
+      (node) =>
+        `${node.id} | latency:${node.latency} | power:${node.power}% | cost:${node.cost} | load:${node.currentLoad}%`,
     )
     .join("\n");
+
+  //  PROMPT
 
   const prompt = `
-You are an AI task scheduler for a space-ground computing system.
+You are an AI scheduler for a distributed space-ground computing system.
 
-Your job is to select the single best node for task execution from the available satellite and ground nodes.
+Choose the SINGLE BEST node for this task.
 
-Task Details:
-- Task Name: ${task.taskName}
-- Compute Power Required: ${task.compute}
+Task:
+- Name: ${task.taskName}
+- Compute: ${task.compute}
 - Data Size: ${task.dataSize} MB
 - Urgency: ${task.urgency}
 
-Available Satellite Nodes:
+Satellite Nodes:
 ${satelliteText}
 
-Available Ground Nodes:
+Ground Nodes:
 ${groundText}
 
-Decision Rules:
-- Prefer lower latency for urgent tasks.
-- Prefer nodes with sufficient power.
+Scheduling Rules:
+- Prefer lower latency for urgent and real-time tasks.
+- Prefer lower load for balanced scheduling.
+- Prefer sufficient power availability.
 - Prefer lower cost when performance is acceptable.
-- Ignore nodes that are not active.
-- Return only one best node.
+- Satellite nodes are better for real-time sensing and edge processing.
+- Ground nodes are better for heavy centralized computation.
 
-IMPORTANT:
-Respond ONLY in pure JSON.
-Do NOT add markdown, backticks, or extra text.
+Return ONLY valid JSON.
 
-Expected JSON format:
+Expected format:
 {
   "decision": "Satellite or Ground",
-  "selectedNode": "sat-1 or ground-1",
-  "nodeType": "satellite or ground",
-  "reason": "4 to 5 line explanation"
+  "selectedNode": "sat-1",
+  "nodeType": "satellite",
+  "confidence": 0.87,
+  "reason": "Short explanation"
 }
 `;
 
-  const result = await model.generateContent(prompt);
+  //  RETRY MECHANISM
+
+  let result;
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      result = await model.generateContent(prompt);
+
+      break;
+    } catch (error) {
+      console.log(`Gemini attempt ${attempt} failed`);
+
+      if (attempt === 3) {
+        console.log("Using fallback scheduler");
+
+        //  FALLBACK LOGIC
+
+        const bestNode = [...activeSatellites, ...activeGrounds].sort(
+          (a, b) => {
+            return (
+              a.latency +
+              a.currentLoad +
+              a.cost -
+              (b.latency + b.currentLoad + b.cost)
+            );
+          },
+        )[0];
+
+        return {
+          decision: bestNode.type === "satellite" ? "Satellite" : "Ground",
+
+          selectedNode: bestNode.id,
+
+          nodeType: bestNode.type,
+
+          confidence: 0.5,
+
+          reason:
+            "Fallback scheduling used because AI service was temporarily unavailable.",
+        };
+      }
+
+      // wait before retry
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+  }
+
+  //  CLEAN RESPONSE
+
   let text = result.response.text().trim();
 
-  // Remove markdown fences if Gemini adds them
   text = text.replace(/```json/gi, "");
   text = text.replace(/```/g, "").trim();
+
+  //  PARSE JSON
 
   try {
     return JSON.parse(text);
   } catch (error) {
     console.error("Gemini RAW RESPONSE:", text);
+
     throw new Error("Invalid JSON received from Gemini");
   }
 }

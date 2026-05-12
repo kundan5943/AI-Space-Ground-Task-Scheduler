@@ -22,6 +22,7 @@ VALID_KEYWORDS = [
     "tracking",
     "Earth", 
     "observation",
+    "forest" ,"fire",
 
     # Weather & Atmosphere
     "storm",

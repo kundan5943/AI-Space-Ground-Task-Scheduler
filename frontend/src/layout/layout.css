@@ -1,0 +1,18 @@
+.logout-btn {
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
+}

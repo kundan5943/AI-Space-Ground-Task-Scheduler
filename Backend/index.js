@@ -10,17 +10,29 @@ const getSimulationData = require("../Simulation/simulationdata");
 const Task = require("./models/Task");
 const getAIDecision = require("./geminiDecision");
 
-app.use(cors());
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//  DATABASE 
+const { signup, login, logout } = require("./controllers/authController");
+const protect = require("./middleware/authMiddleware");
+
+//  DATABASE
 mongoose
   .connect("mongodb://127.0.0.1:27017/ai_task_scheduler")
   .then(() => console.log("Database connected"))
   .catch((err) => console.log(err));
 
-//  LIVE NODE STATE 
+//  LIVE NODE STATE
 let currentNodes = getSimulationData();
 
 // Update node environment every 5 seconds
@@ -29,13 +41,25 @@ setInterval(() => {
   // console.log("Node environment updated");
 }, 5000);
 
-//  SERVER 
+//  SERVER
 app.listen(8080, () => {
   console.log("Server running on http://localhost:8080");
 });
 
-//  ROUTES 
+// Signup Route
+app.post("/aiTaskSchedular/signup", signup);
+// Login Route
+app.post("/aiTaskSchedular/login", login);
 
+// Logout Route
+app.get("/aiTaskSchedular/logout", logout);
+//  ROUTES
+app.get("/aiTaskSchedular/protect", protect, (req, res) => {
+  res.status(200).json({
+    success: true,
+    user: req.user,
+  });
+});
 // Simulation
 app.get("/simulation", (req, res) => {
   res.json(currentNodes);

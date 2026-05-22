@@ -44,7 +44,7 @@ setInterval(() => {
 }, 5000);
 
 //  SERVER
-app.listen(8080, () => {
+app.listen(port, () => {
   console.log("Server running on http://localhost:8080");
 });
 
@@ -75,9 +75,12 @@ app.post("/aiTaskSchedular/submitTask", async (req, res) => {
     // AI VALIDATION CHECK
     let aiCheck;
     try {
-      aiCheck = await axios.post("http://127.0.0.1:5001/validate-task", {
-        task: taskName,
-      });
+      aiCheck = await axios.post(
+        "https://ai-space-ground-task-scheduler-aiservice.onrender.com/validate-task",
+        {
+          task: taskName,
+        },
+      );
     } catch (err) {
       return res.json({ error: "AI validation server not running" });
     }

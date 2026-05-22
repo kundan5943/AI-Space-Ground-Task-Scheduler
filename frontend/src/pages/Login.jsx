@@ -21,7 +21,7 @@ const Login = () => {
 
     try {
       const response = await fetch(
-        "https://ai-space-ground-task-scheduler.onrender.com/aiTaskSchedular/login",
+        "https://ai-space-ground-task-scheduler-backend.onrender.com/aiTaskSchedular/login",
         {
           method: "POST",
 

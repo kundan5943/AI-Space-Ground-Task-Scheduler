@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://ai-space-ground-task-scheduler.onrender.com/",
+  baseURL: "https://ai-space-ground-task-scheduler-backend.onrender.com",
 });
 
 // Simulation

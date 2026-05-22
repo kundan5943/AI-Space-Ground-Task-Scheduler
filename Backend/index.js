@@ -7,7 +7,7 @@ const cors = require("cors");
 const axios = require("axios");
 const mongoUrl = process.env.MongodbUrl;
 const port = process.env.Port;
-console.log(port);
+
 const getSimulationData = require("../Simulation/simulationdata");
 const Task = require("./models/Task");
 const getAIDecision = require("./geminiDecision");
@@ -49,7 +49,7 @@ setInterval(() => {
 
 //  SERVER
 app.listen(port, () => {
-  console.log("Server running on http://localhost:8080");
+  console.log(`Server running on port ${port}`);
 });
 
 // Signup Route

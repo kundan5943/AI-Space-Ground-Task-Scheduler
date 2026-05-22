@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: "https://ai-space-ground-task-scheduler.onrender.com/",
 });
 
 // Simulation
@@ -12,5 +12,4 @@ export const submitTask = (taskData) =>
   API.post("/aiTaskSchedular/submitTask", taskData);
 
 // Decisions
-export const fetchDecisions = () =>
-  API.get("/aiTaskSchedular/decisions");
+export const fetchDecisions = () => API.get("/aiTaskSchedular/decisions");

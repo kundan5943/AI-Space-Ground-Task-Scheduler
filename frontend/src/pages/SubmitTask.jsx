@@ -10,7 +10,7 @@ const SubmitTask = () => {
   const [loading, setLoading] = useState(false);
   const [aiResult, setAiResult] = useState(null);
   const [error, setError] = useState("");
-
+  const [schedulingMode, setSchedulingMode] = useState("Balanced AI");
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -23,6 +23,7 @@ const SubmitTask = () => {
         computePower,
         dataSize,
         urgency,
+        schedulingMode,
       });
 
       // Backend sends error inside response
@@ -31,7 +32,6 @@ const SubmitTask = () => {
       } else {
         setAiResult(res.data);
       }
-
     } catch (err) {
       setError("Server not responding");
     } finally {
@@ -45,7 +45,24 @@ const SubmitTask = () => {
 
       <form className="card" onSubmit={handleSubmit}>
         <div className="form-grid">
+          <div className="form-group">
+            <label>Scheduling Mode</label>
 
+            <select
+              value={schedulingMode}
+              onChange={(e) => setSchedulingMode(e.target.value)}
+            >
+              <option>Balanced AI</option>
+
+              <option>Latency Optimized</option>
+
+              <option>Cost Optimized</option>
+
+              <option>Power Optimized</option>
+
+              <option>Load Balanced</option>
+            </select>
+          </div>
           <div className="form-group">
             <label>Task Name</label>
             <input
@@ -58,7 +75,10 @@ const SubmitTask = () => {
 
           <div className="form-group">
             <label>Urgency</label>
-            <select value={urgency} onChange={(e) => setUrgency(e.target.value)}>
+            <select
+              value={urgency}
+              onChange={(e) => setUrgency(e.target.value)}
+            >
               <option>Low</option>
               <option>Medium</option>
               <option>High</option>
@@ -88,7 +108,6 @@ const SubmitTask = () => {
               onChange={(e) => setDataSize(e.target.value)}
             />
           </div>
-
         </div>
 
         <button className="btn" disabled={loading}>
@@ -102,101 +121,119 @@ const SubmitTask = () => {
         </div>
       )}
 
-{aiResult && (
-  <div
-    className="glass card-padding hover-lift"
-    style={{
-      marginTop: "28px",
-      border: "1px solid rgba(0,240,255,0.25)",
-      boxShadow: "0 0 18px rgba(0,240,255,0.12)",
-      borderRadius: "18px",
-    }}
-  >
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "18px",
-      }}
-    >
-      <h2 style={{ margin: 0 }}>AI Decision Result</h2>
+      {aiResult && (
+        <div
+          className="glass card-padding hover-lift"
+          style={{
+            marginTop: "28px",
+            border: "1px solid rgba(0,240,255,0.25)",
+            boxShadow: "0 0 18px rgba(0,240,255,0.12)",
+            borderRadius: "18px",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "18px",
+            }}
+          >
+            <h2 style={{ margin: 0 }}>AI Decision Result</h2>
 
-      <span
-        style={{
-          padding: "8px 14px",
-          borderRadius: "999px",
-          fontWeight: "700",
-          background:
-            aiResult.nodeType === "satellite"
-              ? "rgba(0,240,255,0.15)"
-              : "rgba(122,92,255,0.18)",
-          color:
-            aiResult.nodeType === "satellite" ? "#00f0ff" : "#a78bfa",
-          border:
-            aiResult.nodeType === "satellite"
-              ? "1px solid rgba(0,240,255,0.35)"
-              : "1px solid rgba(167,139,250,0.35)",
-        }}
-      >
-        {aiResult.decision}
-      </span>
-    </div>
+            <span
+              style={{
+                padding: "8px 14px",
+                borderRadius: "999px",
+                fontWeight: "700",
+                background:
+                  aiResult.nodeType === "satellite"
+                    ? "rgba(0,240,255,0.15)"
+                    : "rgba(122,92,255,0.18)",
+                color:
+                  aiResult.nodeType === "satellite" ? "#00f0ff" : "#a78bfa",
+                border:
+                  aiResult.nodeType === "satellite"
+                    ? "1px solid rgba(0,240,255,0.35)"
+                    : "1px solid rgba(167,139,250,0.35)",
+              }}
+            >
+              {aiResult.decision}
+            </span>
+          </div>
 
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-        gap: "16px",
-        marginBottom: "18px",
-      }}
-    >
-      <div
-        style={{
-          padding: "14px",
-          borderRadius: "14px",
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,255,255,0.08)",
-        }}
-      >
-        <div style={{ color: "#9aa4b2", marginBottom: "6px" }}>
-          Selected Node
-        </div>
-        <div style={{ fontSize: "18px", fontWeight: "700" }}>
-          {aiResult.selectedNode || "--"}
-        </div>
-      </div>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gap: "16px",
+              marginBottom: "18px",
+            }}
+          >
+            <div
+              style={{
+                padding: "14px",
+                borderRadius: "14px",
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              <div style={{ color: "#9aa4b2", marginBottom: "6px" }}>
+                Selected Node
+              </div>
+              <div style={{ fontSize: "18px", fontWeight: "700" }}>
+                {aiResult.selectedNode || "--"}
+              </div>
+            </div>
 
-      <div
-        style={{
-          padding: "14px",
-          borderRadius: "14px",
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,255,255,0.08)",
-        }}
-      >
-        <div style={{ color: "#9aa4b2", marginBottom: "6px" }}>
-          Node Type
-        </div>
-        <div style={{ fontSize: "18px", fontWeight: "700" }}>
-          {aiResult.nodeType || "--"}
-        </div>
-      </div>
-    </div>
+            <div
+              style={{
+                padding: "14px",
+                borderRadius: "14px",
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              <div style={{ color: "#9aa4b2", marginBottom: "6px" }}>
+                Node Type
+              </div>
+              <div style={{ fontSize: "18px", fontWeight: "700" }}>
+                {aiResult.nodeType || "--"}
+              </div>
+            </div>
+            <div
+              style={{
+                padding: "14px",
+                borderRadius: "14px",
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              <div style={{ color: "#9aa4b2", marginBottom: "6px" }}>
+                Scheduling Mode
+              </div>
 
-    <div
-      style={{
-        padding: "16px",
-        borderRadius: "14px",
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.08)",
-      }}
-    >
-      <div style={{ color: "#9aa4b2", marginBottom: "8px" }}>AI Reasoning</div>
-      <div style={{ lineHeight: "28px" }}>{aiResult.reason}</div>
-    </div>
-  </div>
-)}
+              <div style={{ fontSize: "18px", fontWeight: "700" }}>
+                {schedulingMode}
+              </div>
+            </div>
+          </div>
+
+          <div
+            style={{
+              padding: "16px",
+              borderRadius: "14px",
+              background: "rgba(255,255,255,0.03)",
+              border: "1px solid rgba(255,255,255,0.08)",
+            }}
+          >
+            <div style={{ color: "#9aa4b2", marginBottom: "8px" }}>
+              AI Reasoning
+            </div>
+            <div style={{ lineHeight: "28px" }}>{aiResult.reason}</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

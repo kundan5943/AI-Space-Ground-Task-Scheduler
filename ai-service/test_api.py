@@ -1,6 +1,6 @@
 import requests
 
-url = "http://127.0.0.1:5001/validate-task"
+url = "https://ai-space-ground-task-scheduler-aiservice.onrender.com/validate-task"
 
 valid_data = {"task": "Flood detection using satellite imagery"}
 invalid_data = {"task": "vijay birthday"}

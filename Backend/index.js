@@ -15,17 +15,17 @@ const getAIDecision = require("./geminiDecision");
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
-// app.use(
-//   cors({
-//     origin: [
-//       "http://localhost:5173",
-//       "https://ai-space-ground-task-scheduler-frontend.onrender.com/",
-//     ],
-//     credentials: true,
-//   }),
-// );
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://ai-space-ground-task-scheduler-frontend.onrender.com/",
+    ],
+    credentials: true,
+  }),
+);
 
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

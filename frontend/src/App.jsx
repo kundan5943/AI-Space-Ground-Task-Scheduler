@@ -24,7 +24,14 @@ function App() {
           <Route path="analytics" element={<Analytics />} /> */}
         {/* </Route> */}
 
-        <Route path="/" element={<Layout />}>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Dashboard />} />
 
           <Route path="submit" element={<SubmitTask />} />

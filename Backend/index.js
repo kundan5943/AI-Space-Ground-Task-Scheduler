@@ -17,10 +17,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://ai-space-ground-task-scheduler-frontend.onrender.com",
-    ],
+    origin: "https://ai-space-ground-task-scheduler-frontend.onrender.com",
     credentials: true,
   }),
 );

@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children }) => {
     const verifyUser = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/aiTaskSchedular/protect",
+          "https://ai-space-ground-task-scheduler.onrender.com/aiTaskSchedular/protect",
           {
             method: "GET",
             credentials: "include",

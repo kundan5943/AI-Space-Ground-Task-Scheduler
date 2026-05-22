@@ -1,7 +1,15 @@
 require("dotenv").config();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const apiKeys = [
+  process.env.GEMINI_API_KEY_1,
+  process.env.GEMINI_API_KEY_2,
+  process.env.GEMINI_API_KEY_3,
+  process.env.GEMINI_API_KEY_4,
+];
+
+let currentKeyIndex = 0;
 
 async function getAIDecision(task, nodes) {
   //  SAFETY CHECK
@@ -41,9 +49,9 @@ async function getAIDecision(task, nodes) {
 
   //  GEMINI MODEL
 
-  const model = genAI.getGenerativeModel({
-    model: "models/gemini-1.5-flash",
-  });
+  // const model = genAI.getGenerativeModel({
+  //   model: "models/gemini-2.5-flash",
+  // });
 
   //  COMPACT NODE TEXT
 
@@ -80,14 +88,28 @@ ${satelliteText}
 Ground Nodes:
 ${groundText}
 
-Scheduling Rules:
-- Prefer lower latency for urgent and real-time tasks.
-- Prefer lower load for balanced scheduling.
-- Prefer sufficient power availability.
-- Prefer lower cost when performance is acceptable.
-- Satellite nodes are better for real-time sensing and edge processing.
-- Ground nodes are better for heavy centralized computation.
+Scheduling Mode:
+${task.schedulingMode}
+Scheduling Strategy Rules:
 
+1. Balanced AI
+- Balance latency, power, cost, and load.
+
+2. Latency Optimized
+- Strongly prioritize lowest latency.
+- Ideal for real-time and urgent tasks.
+
+3. Cost Optimized
+- Prefer lower operational cost.
+- Accept slightly higher latency if needed.
+
+4. Power Optimized
+- Avoid low-power nodes.
+- Preserve satellite energy when possible.
+
+5. Load Balanced
+- Prefer nodes with lower current load.
+- Avoid overloaded nodes.
 Return ONLY valid JSON.
 
 Expected format:
@@ -104,15 +126,30 @@ Expected format:
 
   let result;
 
-  for (let attempt = 1; attempt <= 3; attempt++) {
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    const genAI = new GoogleGenerativeAI(apiKeys[currentKeyIndex]);
+
+    const model = genAI.getGenerativeModel({
+      model: "models/gemini-2.5-flash",
+    });
+
     try {
       result = await model.generateContent(prompt);
 
       break;
     } catch (error) {
-      console.log(`Gemini attempt ${attempt} failed`);
+      console.log(
+        `Gemini attempt ${attempt} failed using API Key ${currentKeyIndex + 1}`,
+      );
 
-      if (attempt === 3) {
+      // ================= SWITCH KEY =================
+
+      if (error.status === 429 || error.status === 503) {
+        currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
+
+        console.log(`Switched to API Key ${currentKeyIndex + 1}`);
+      }
+      if (attempt === 4) {
         console.log("Using fallback scheduler");
 
         //  FALLBACK LOGIC

@@ -5,6 +5,7 @@ const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
 const axios = require("axios");
+const mongoUrl = process.env.MongodbUrl;
 
 const getSimulationData = require("../Simulation/simulationdata");
 const Task = require("./models/Task");
@@ -28,7 +29,7 @@ const protect = require("./middleware/authMiddleware");
 
 //  DATABASE
 mongoose
-  .connect("mongodb://127.0.0.1:27017/ai_task_scheduler")
+  .connect(mongoUrl)
   .then(() => console.log("Database connected"))
   .catch((err) => console.log(err));
 
@@ -90,6 +91,7 @@ app.post("/aiTaskSchedular/submitTask", async (req, res) => {
       compute: Number(req.body.computePower),
       dataSize: Number(req.body.dataSize),
       urgency: req.body.urgency,
+      schedulingMode: req.body.schedulingMode,
     };
 
     const nodes = currentNodes;

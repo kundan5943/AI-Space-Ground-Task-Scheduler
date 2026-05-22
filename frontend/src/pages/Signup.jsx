@@ -21,7 +21,7 @@ const SignUp = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/aiTaskSchedular/Signup",
+        "https://ai-space-ground-task-scheduler.onrender.com/Signup",
         {
           method: "POST",
 

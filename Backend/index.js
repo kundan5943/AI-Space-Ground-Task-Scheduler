@@ -6,7 +6,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const axios = require("axios");
 const mongoUrl = process.env.MongodbUrl;
-
+const port = process.env.Port;
+console.log(port);
 const getSimulationData = require("../Simulation/simulationdata");
 const Task = require("./models/Task");
 const getAIDecision = require("./geminiDecision");

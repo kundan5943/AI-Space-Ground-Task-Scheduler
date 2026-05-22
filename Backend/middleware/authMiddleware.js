@@ -12,11 +12,15 @@ const protect = async (req, res, next) => {
         message: "No token, authorization denied",
       });
     }
+
     // verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // get user data except password
     const userData = await User.findById(decoded.id).select("-password");
+
+    // attach user to request
+    req.user = userData;
 
     next();
   } catch (error) {

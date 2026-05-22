@@ -4,10 +4,13 @@ export default function Header() {
   const navigate = useNavigate();
   const logoutUser = async () => {
     try {
-      await fetch("http://localhost:8080/aiTaskSchedular/logout", {
-        method: "GET",
-        credentials: "include",
-      });
+      await fetch(
+        "https://ai-space-ground-task-scheduler-backend.onrender.com/aiTaskSchedular/logout",
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
 
       navigate("/login");
     } catch (error) {

@@ -19,7 +19,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://ai-space-ground-task-scheduler-frontend.onrender.com/",
+      "https://ai-space-ground-task-scheduler-frontend.onrender.com",
     ],
     credentials: true,
   }),
